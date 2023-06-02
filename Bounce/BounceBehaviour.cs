@@ -2,25 +2,27 @@
 
 namespace Bounce
 {
-    public class BounceCollider : MonoBehaviour
+    public class BounceBehaviour : MonoBehaviour
     {
         private float _triggerStart;
-        private const float TriggerCooldown = 0.2f;
+        private const float TriggerCooldown = 0.1f;
+        private const float BounceForce = 10f;
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!other.TryGetComponent(out BounceCollider _)) return;  // If not colliding with player, return
+            if (!other.TryGetComponent(out BounceBehaviour _)) return;  // If not colliding with player, return
 
             if (!gameObject.TryGetComponent(out Rigidbody thisRigidbody) ||
-                !other.TryGetComponent(out Rigidbody otherRigidbody)) return; // Check we can get both rigidbodys
+                !other.TryGetComponent(out Rigidbody otherRigidbody)) return; // Check we can get both rigidbodies
 
-            if (Time.time > _triggerStart + TriggerCooldown)
-            {
-                Debug.Log("boop");
-                otherRigidbody.AddForce(thisRigidbody.velocity * 3, ForceMode.Impulse);  // Apply force opposite
+            if (!(Time.time > _triggerStart + TriggerCooldown)) return;
             
-                _triggerStart = Time.time;  // Update cooldown
-            } 
+            var direction = thisRigidbody.position - otherRigidbody.position;
+            var totalForce = direction + thisRigidbody.velocity * BounceForce;
+                
+            otherRigidbody.AddForce(totalForce, ForceMode.Impulse);
+
+            _triggerStart = Time.time;  // Update cooldown
         }
     }
 }

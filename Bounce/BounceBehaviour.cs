@@ -18,7 +18,9 @@ namespace Bounce
             if (!(Time.time > _triggerStart + TriggerCooldown)) return;
             
             var direction = thisRigidbody.position - otherRigidbody.position;
-            var totalForce = direction + thisRigidbody.velocity * BounceForce;
+            var totalForce = direction.normalized + thisRigidbody.velocity * BounceForce;
+            
+            Debug.Log($"Applying force: {totalForce}");
                 
             otherRigidbody.AddForce(totalForce, ForceMode.Impulse);
 
